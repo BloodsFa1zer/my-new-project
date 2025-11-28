@@ -120,47 +120,89 @@ public class Application {
     }
 
     private void handleSearch() {
-        System.out.print("Enter requested amount: ");
-        BigDecimal amount = new BigDecimal(scanner.nextLine().trim());
-        System.out.print("Enter term in months: ");
-        int term = Integer.parseInt(scanner.nextLine().trim());
+        try {
+            System.out.print("Enter requested amount: ");
+            String amountStr = scanner.nextLine().trim();
+            if (amountStr.isEmpty()) {
+                System.out.println("Invalid amount");
+                return;
+            }
+            BigDecimal amount = new BigDecimal(amountStr);
+            System.out.print("Enter term in months: ");
+            String termStr = scanner.nextLine().trim();
+            if (termStr.isEmpty()) {
+                System.out.println("Invalid term");
+                return;
+            }
+            int term = Integer.parseInt(termStr);
 
-        Client client = createClientFromInput();
+            Client client = createClientFromInput();
+            if (client == null) {
+                return;
+            }
 
-        List<Credit> results = creditSearchService.findBestOffers(client, amount, term);
+            List<Credit> results = creditSearchService.findBestOffers(client, amount, term);
 
-        if (results.isEmpty()) {
-            System.out.println("No suitable credits found");
-        } else {
-            System.out.println("\nFound " + results.size() + " credit(s):");
-            results.forEach(credit -> {
-                System.out.println(credit.getBank().getName() + " - " + credit.getCreditType() +
-                        " - Rate: " + credit.getInterestRate() + "% - Monthly: " +
-                        credit.calculateMonthlyPayment());
-            });
+            if (results.isEmpty()) {
+                System.out.println("No suitable credits found");
+            } else {
+                System.out.println("\nFound " + results.size() + " credit(s):");
+                results.forEach(credit -> {
+                    if (credit.getBank() != null && credit.getInterestRate() != null) {
+                        System.out.println(credit.getBank().getName() + " - " + credit.getCreditType() +
+                                " - Rate: " + credit.getInterestRate() + "% - Monthly: " +
+                                credit.calculateMonthlyPayment());
+                    }
+                });
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid number format");
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
     private void handleSelection() {
-        System.out.print("Enter requested amount: ");
-        BigDecimal amount = new BigDecimal(scanner.nextLine().trim());
-        System.out.print("Enter term in months: ");
-        int term = Integer.parseInt(scanner.nextLine().trim());
+        try {
+            System.out.print("Enter requested amount: ");
+            String amountStr = scanner.nextLine().trim();
+            if (amountStr.isEmpty()) {
+                System.out.println("Invalid amount");
+                return;
+            }
+            BigDecimal amount = new BigDecimal(amountStr);
+            System.out.print("Enter term in months: ");
+            String termStr = scanner.nextLine().trim();
+            if (termStr.isEmpty()) {
+                System.out.println("Invalid term");
+                return;
+            }
+            int term = Integer.parseInt(termStr);
 
-        Client client = createClientFromInput();
+            Client client = createClientFromInput();
+            if (client == null) {
+                return;
+            }
 
-        var optimal = creditSelectionService.selectOptimalCredit(client, amount, term, true, true);
+            var optimal = creditSelectionService.selectOptimalCredit(client, amount, term, true, true);
 
-        if (optimal.isPresent()) {
-            Credit credit = optimal.get();
-            System.out.println("\nOptimal credit:");
-            System.out.println("Bank: " + credit.getBank().getName());
-            System.out.println("Type: " + credit.getCreditType());
-            System.out.println("Rate: " + credit.getInterestRate() + "%");
-            System.out.println("Monthly payment: " + credit.calculateMonthlyPayment());
-            System.out.println("Total payment: " + credit.calculateTotalPayment());
-        } else {
-            System.out.println("No suitable credit found");
+            if (optimal.isPresent()) {
+                Credit credit = optimal.get();
+                if (credit.getBank() != null && credit.getInterestRate() != null) {
+                    System.out.println("\nOptimal credit:");
+                    System.out.println("Bank: " + credit.getBank().getName());
+                    System.out.println("Type: " + credit.getCreditType());
+                    System.out.println("Rate: " + credit.getInterestRate() + "%");
+                    System.out.println("Monthly payment: " + credit.calculateMonthlyPayment());
+                    System.out.println("Total payment: " + credit.calculateTotalPayment());
+                }
+            } else {
+                System.out.println("No suitable credit found");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid number format");
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
@@ -170,21 +212,39 @@ public class Application {
             System.out.println("No credits available");
         } else {
             credits.forEach(credit -> {
-                System.out.println(credit.getId() + " - " + credit.getBank().getName() +
-                        " - " + credit.getCreditType() + " - " + credit.getAmount() +
-                        " - " + credit.getInterestRate() + "%");
+                if (credit != null && credit.getBank() != null && credit.getAmount() != null && 
+                        credit.getInterestRate() != null) {
+                    System.out.println(credit.getId() + " - " + credit.getBank().getName() +
+                            " - " + credit.getCreditType() + " - " + credit.getAmount() +
+                            " - " + credit.getInterestRate() + "%");
+                }
             });
         }
     }
 
     private Client createClientFromInput() {
-        System.out.print("Enter monthly income: ");
-        BigDecimal income = new BigDecimal(scanner.nextLine().trim());
-        System.out.print("Enter credit score: ");
-        int score = Integer.parseInt(scanner.nextLine().trim());
+        try {
+            System.out.print("Enter monthly income: ");
+            String incomeStr = scanner.nextLine().trim();
+            if (incomeStr.isEmpty()) {
+                System.out.println("Invalid income");
+                return null;
+            }
+            BigDecimal income = new BigDecimal(incomeStr);
+            System.out.print("Enter credit score: ");
+            String scoreStr = scanner.nextLine().trim();
+            if (scoreStr.isEmpty()) {
+                System.out.println("Invalid credit score");
+                return null;
+            }
+            int score = Integer.parseInt(scoreStr);
 
-        return new Client("CLI001", "John", "Doe", "john@example.com",
-                income, score, false);
+            return new Client("CLI001", "John", "Doe", "john@example.com",
+                    income, score, false);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid number format");
+            return null;
+        }
     }
 
     private void saveData() {

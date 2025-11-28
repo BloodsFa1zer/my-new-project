@@ -34,16 +34,30 @@ public class Credit {
     }
 
     public BigDecimal calculateTotalPayment() {
+        if (amount == null || interestRate == null || termMonths <= 0) {
+            return BigDecimal.ZERO;
+        }
+        if (interestRate.compareTo(BigDecimal.ZERO) == 0) {
+            return amount;
+        }
         BigDecimal monthlyRate = interestRate.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP)
                 .divide(BigDecimal.valueOf(12), 4, RoundingMode.HALF_UP);
+        double powValue = Math.pow(1 + monthlyRate.doubleValue(), termMonths);
+        BigDecimal denominator = BigDecimal.valueOf(powValue - 1);
+        if (denominator.compareTo(BigDecimal.ZERO) == 0) {
+            return amount;
+        }
         BigDecimal monthlyPayment = amount.multiply(
-                monthlyRate.multiply(BigDecimal.valueOf(Math.pow(1 + monthlyRate.doubleValue(), termMonths)))
-                        .divide(BigDecimal.valueOf(Math.pow(1 + monthlyRate.doubleValue(), termMonths) - 1), 4, RoundingMode.HALF_UP)
+                monthlyRate.multiply(BigDecimal.valueOf(powValue))
+                        .divide(denominator, 4, RoundingMode.HALF_UP)
         );
         return monthlyPayment.multiply(BigDecimal.valueOf(termMonths));
     }
 
     public BigDecimal calculateMonthlyPayment() {
+        if (termMonths <= 0) {
+            return BigDecimal.ZERO;
+        }
         return calculateTotalPayment().divide(BigDecimal.valueOf(termMonths), 2, RoundingMode.HALF_UP);
     }
 
