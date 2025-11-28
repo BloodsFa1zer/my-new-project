@@ -11,7 +11,7 @@
 
 ```bash
 mvn clean compile
-mvn exec:java -Dexec.mainClass="ua.edu.credit.Application"
+mvn exec:java -Dexec.mainClass="credit.Application"
 ```
 
 ## Запуск тестів
@@ -24,7 +24,7 @@ mvn test
 
 ```
 src/
-├── main/java/ua/edu/credit/
+├── main/java/credit/
 │   ├── model/          - Моделі даних (Bank, Credit, Client та спеціалізовані типи кредитів)
 │   ├── repository/     - Репозиторії для зберігання даних
 │   ├── service/        - Бізнес-логіка пошуку та вибору кредитів
