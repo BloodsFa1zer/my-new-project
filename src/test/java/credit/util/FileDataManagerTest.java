@@ -28,7 +28,12 @@ class FileDataManagerTest {
     private void cleanupTestFiles() {
         new File(TEST_CREDITS_FILE).delete();
         new File(TEST_BANKS_FILE).delete();
-        new File("data").delete();
+        new File("data/credits.json").delete();
+        new File("data/banks.json").delete();
+        File dataDir = new File("data");
+        if (dataDir.exists() && dataDir.listFiles() != null && dataDir.listFiles().length == 0) {
+            dataDir.delete();
+        }
     }
 
     @Test

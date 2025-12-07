@@ -3,13 +3,14 @@ package credit.model;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+// Клас для представлення клієнта
 public class Client {
     private String id;
     private String firstName;
     private String lastName;
     private String email;
     private BigDecimal monthlyIncome;
-    private int creditScore;
+    private int creditScore;  // від 300 до 850
     private boolean hasExistingCredits;
 
     public Client() {
@@ -26,6 +27,8 @@ public class Client {
         this.hasExistingCredits = hasExistingCredits;
     }
 
+    // Перевіряє чи може клієнт отримати кредит
+    // Платіж має бути не більше 40% доходу і кредитний рейтинг >= 600
     public boolean isEligibleForCredit(BigDecimal requestedAmount, BigDecimal monthlyPayment) {
         if (monthlyIncome == null || monthlyIncome.compareTo(BigDecimal.ZERO) <= 0) {
             return false;

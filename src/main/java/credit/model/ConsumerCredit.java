@@ -2,6 +2,7 @@ package credit.model;
 
 import java.math.BigDecimal;
 
+// Клас для споживчих кредитів
 public class ConsumerCredit extends Credit {
     private String purpose;
     private boolean requiresCollateral;
@@ -23,6 +24,7 @@ public class ConsumerCredit extends Credit {
         this.maxAmount = maxAmount;
     }
 
+    // Перевіряє чи сума кредиту не перевищує максимальну
     public boolean isAmountWithinLimit() {
         return maxAmount != null && getAmount().compareTo(maxAmount) <= 0;
     }

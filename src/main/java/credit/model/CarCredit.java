@@ -3,6 +3,7 @@ package credit.model;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+// Клас для автокредитів
 public class CarCredit extends Credit {
     private String carBrand;
     private String carModel;
@@ -28,6 +29,7 @@ public class CarCredit extends Credit {
         this.newCar = newCar;
     }
 
+    // Розраховує відсоток депреціації - скільки від вартості авто становить кредит
     public BigDecimal calculateDepreciationRate() {
         if (carValue == null || carValue.compareTo(BigDecimal.ZERO) == 0) {
             return BigDecimal.ZERO;

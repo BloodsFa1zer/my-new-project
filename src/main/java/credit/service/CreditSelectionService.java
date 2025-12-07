@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+// Сервіс для вибору оптимального кредиту
 public class CreditSelectionService {
     private CreditRepository creditRepository;
     private CreditSearchService creditSearchService;
@@ -19,6 +20,8 @@ public class CreditSelectionService {
         this.creditSearchService = creditSearchService;
     }
 
+    // Знаходить один найкращий кредит з урахуванням переваг
+    // Сортуємо: спочатку за ставкою, потім за наявністю бажаних опцій, потім за рейтингом банку
     public Optional<Credit> selectOptimalCredit(Client client, BigDecimal requestedAmount, int termMonths,
                                                 boolean preferEarlyRepayment, boolean preferCreditLineIncrease) {
         List<Credit> candidates = creditSearchService.searchByClientNeeds(client, requestedAmount, termMonths);
@@ -29,14 +32,17 @@ public class CreditSelectionService {
 
         Comparator<Credit> comparator = Comparator.comparing(Credit::getInterestRate);
 
+        // Якщо клієнт хоче дострокове погашення - кредити з цією опцією будуть вище
         if (preferEarlyRepayment) {
             comparator = comparator.thenComparing(credit -> !credit.isEarlyRepaymentAllowed());
         }
 
+        // Те саме для збільшення ліміту
         if (preferCreditLineIncrease) {
             comparator = comparator.thenComparing(credit -> !credit.isCreditLineIncreaseAllowed());
         }
 
+        // В кінці сортуємо за рейтингом банку (вище = краще)
         comparator = comparator.thenComparing((Credit credit) -> credit.getBank().getRating()).reversed();
 
         return candidates.stream()

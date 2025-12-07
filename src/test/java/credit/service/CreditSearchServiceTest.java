@@ -101,8 +101,8 @@ class CreditSearchServiceTest {
 
         assertFalse(results.isEmpty());
         if (results.size() > 1) {
-            BigDecimal firstRating = results.get(0).getBank().getRating();
-            BigDecimal secondRating = results.get(1).getBank().getRating();
+            BigDecimal firstRating = BigDecimal.valueOf(results.get(0).getBank().getRating());
+            BigDecimal secondRating = BigDecimal.valueOf(results.get(1).getBank().getRating());
             assertTrue(firstRating.compareTo(secondRating) >= 0);
         }
     }

@@ -5,12 +5,14 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.Objects;
 
+// Базовий клас для кредиту
+// Від нього наслідуються MortgageCredit, ConsumerCredit, CarCredit
 public class Credit {
     private String id;
     private Bank bank;
-    private String creditType;
+    private String creditType;  // CONSUMER, MORTGAGE, CAR
     private BigDecimal amount;
-    private BigDecimal interestRate;
+    private BigDecimal interestRate;  // річна ставка в %
     private int termMonths;
     private boolean earlyRepaymentAllowed;
     private boolean creditLineIncreaseAllowed;
@@ -33,6 +35,8 @@ public class Credit {
         this.startDate = LocalDate.now();
     }
 
+    // Розраховує загальну суму яку потрібно повернути
+    // Використовується формула ануїтетного платежу
     public BigDecimal calculateTotalPayment() {
         if (amount == null || interestRate == null || termMonths <= 0) {
             return BigDecimal.ZERO;
@@ -40,20 +44,28 @@ public class Credit {
         if (interestRate.compareTo(BigDecimal.ZERO) == 0) {
             return amount;
         }
+        
+        // Обчислюємо місячну ставку
         BigDecimal monthlyRate = interestRate.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP)
                 .divide(BigDecimal.valueOf(12), 4, RoundingMode.HALF_UP);
+        
         double powValue = Math.pow(1 + monthlyRate.doubleValue(), termMonths);
         BigDecimal denominator = BigDecimal.valueOf(powValue - 1);
+        
         if (denominator.compareTo(BigDecimal.ZERO) == 0) {
             return amount;
         }
+        
+        // Формула ануїтету
         BigDecimal monthlyPayment = amount.multiply(
                 monthlyRate.multiply(BigDecimal.valueOf(powValue))
                         .divide(denominator, 4, RoundingMode.HALF_UP)
         );
+        
         return monthlyPayment.multiply(BigDecimal.valueOf(termMonths));
     }
 
+    // Просто ділимо загальну суму на кількість місяців
     public BigDecimal calculateMonthlyPayment() {
         if (termMonths <= 0) {
             return BigDecimal.ZERO;

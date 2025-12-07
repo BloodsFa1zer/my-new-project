@@ -3,6 +3,7 @@ package credit.model;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+// Клас для іпотечних кредитів
 public class MortgageCredit extends Credit {
     private BigDecimal propertyValue;
     private BigDecimal downPayment;
@@ -24,6 +25,7 @@ public class MortgageCredit extends Credit {
         this.propertyType = propertyType;
     }
 
+    // Розраховує Loan-to-Value (LTV) - скільки відсотків від вартості нерухомості становить кредит
     public BigDecimal calculateLoanToValue() {
         if (propertyValue == null || propertyValue.compareTo(BigDecimal.ZERO) == 0) {
             return BigDecimal.ZERO;
